@@ -43,6 +43,26 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
+   scheduleMessage: async (content, scheduledFor) => {
+    const { selectedUser } = get();
+    if (!selectedUser) {
+      toast.error("Please select a user first");
+      return;
+    }
+    try {
+      const res = await axiosInstance.post("/messages/schedule", {
+        receiver: selectedUser._id,
+        content,
+        scheduledFor,
+      });
+      toast.success("Message scheduled successfully!");
+      return res.data;
+    } catch (error) {
+      toast.error(error.response?.data?.error || "Failed to schedule message");
+    }
+  },
+
+
   subscribeToMessages: () => {
     const { selectedUser } = get();
     if (!selectedUser) return;

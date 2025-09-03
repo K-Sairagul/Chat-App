@@ -18,6 +18,10 @@ const messageSchema = new mongoose.Schema(
     image: {
       type: String,
     },
+
+    
+    scheduledFor: { type: Date, default: null }, // ⏰ schedule time
+    delivered: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

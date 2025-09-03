@@ -1,9 +1,9 @@
 import User from "../models/user.model.js";
 import Message from "../models/message.model.js";
-
 import cloudinary from "../lib/cloudinary.js";
 import { getReceiverSocketId, io } from "../lib/socket.js";
 
+// Sidebar users
 export const getUsersForSidebar = async (req, res) => {
   try {
     const loggedInUserId = req.user._id;
@@ -16,6 +16,33 @@ export const getUsersForSidebar = async (req, res) => {
   }
 };
 
+// Schedule message
+export const scheduleMessage = async (req, res) => {
+  try {
+    const { receiver, content, scheduledFor } = req.body;
+    const senderId = req.user._id; // from auth middleware
+
+    const message = new Message({
+      senderId,
+      receiverId: receiver,
+      text: content,
+      scheduledFor: new Date(scheduledFor),
+    });
+
+    await message.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Message scheduled successfully",
+      data: message,
+    });
+  } catch (error) {
+    console.error("Error scheduling message:", error);
+    res.status(500).json({ success: false, error: "Failed to schedule message" });
+  }
+};
+
+// Get messages between two users
 export const getMessages = async (req, res) => {
   try {
     const { id: userToChatId } = req.params;
@@ -35,6 +62,7 @@ export const getMessages = async (req, res) => {
   }
 };
 
+// Send message instantly
 export const sendMessage = async (req, res) => {
   try {
     const { text, image } = req.body;
