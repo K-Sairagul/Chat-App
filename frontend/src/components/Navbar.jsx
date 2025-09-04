@@ -1,3 +1,4 @@
+// components/Navbar.jsx
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
 import { LogOut, MessageSquare, Settings, User, ListTodo } from "lucide-react";
@@ -21,32 +22,32 @@ const Navbar = () => {
               <div className="size-9 rounded-lg bg-primary/10 flex items-center justify-center">
                 <MessageSquare className="w-5 h-5 text-primary" />
               </div>
-              <h1 className="text-lg font-bold">Chatty</h1>
+              <h1 className="text-lg font-bold">Chat-Up</h1>
             </Link>
           </div>
 
           {/* Right Buttons */}
           <div className="flex items-center gap-2">
-            {/* ✅ To-Do List button */}
-            <Link
-              to="/todo"
-              className="btn btn-sm gap-2 transition-colors"
-            >
-              <ListTodo className="w-4 h-4" />
-              <span className="hidden sm:inline">To-Do List</span>
-            </Link>
-
-            {/* Settings */}
-            <Link
-              to="/settings"
-              className="btn btn-sm gap-2 transition-colors"
-            >
-              <Settings className="w-4 h-4" />
-              <span className="hidden sm:inline">Settings</span>
-            </Link>
-
             {authUser && (
               <>
+                {/* ✅ To-Do List button (only after login) */}
+                <Link
+                  to="/todo"
+                  className="btn btn-sm gap-2 transition-colors"
+                >
+                  <ListTodo className="w-4 h-4" />
+                  <span className="hidden sm:inline">To-Do List</span>
+                </Link>
+
+                {/* Settings */}
+                <Link
+                  to="/settings"
+                  className="btn btn-sm gap-2 transition-colors"
+                >
+                  <Settings className="w-4 h-4" />
+                  <span className="hidden sm:inline">Settings</span>
+                </Link>
+
                 {/* Profile */}
                 <Link to="/profile" className="btn btn-sm gap-2">
                   <User className="size-5" />

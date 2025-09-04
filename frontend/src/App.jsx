@@ -2,6 +2,7 @@ import Navbar from "./components/Navbar";
 import TodoPage from "./components/TodoPage";
 
 import HomePage from "./pages/HomePage";
+import NotesPage from "./pages/NotesPage";
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
 import SettingsPage from "./pages/SettingsPage";
@@ -45,6 +46,7 @@ const App = () => {
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
         <Route path="/todo" element={<TodoPage />} />
+        <Route path="/notes/:friendId" element={<NotesPage />} />
       </Routes>
 
       <Toaster />
