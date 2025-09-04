@@ -20,20 +20,13 @@ const PORT = process.env.PORT;
 const __dirname = path.resolve();
 
 app.use(express.json());
-
 app.use(cookieParser());
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://chat-app-gnvv.onrender.com"
-];
-
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: "http://localhost:5173" ,
     credentials: true,
   })
 );
-
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
