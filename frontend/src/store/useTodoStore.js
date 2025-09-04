@@ -18,12 +18,14 @@ export const useTodoStore = create((set, get) => ({
     }
   },
 
-  addTodo: async (text) => {
+  addTodo: async (text, completeBy = null) => {
     try {
-      const res = await axiosInstance.post("/todos", { text });
+      const res = await axiosInstance.post("/todos", { text, completeBy });
       set({ todos: [res.data, ...get().todos] });
+      return res.data;
     } catch (err) {
       toast.error(err?.response?.data?.error || "Failed to add todo");
+      throw err;
     }
   },
 
@@ -33,8 +35,10 @@ export const useTodoStore = create((set, get) => ({
       set({
         todos: get().todos.map((t) => (t._id === id ? res.data : t)),
       });
+      return res.data;
     } catch (err) {
       toast.error(err?.response?.data?.error || "Failed to update todo");
+      throw err;
     }
   },
 
@@ -44,8 +48,10 @@ export const useTodoStore = create((set, get) => ({
       set({
         todos: get().todos.map((t) => (t._id === id ? res.data : t)),
       });
+      return res.data;
     } catch (err) {
       toast.error(err?.response?.data?.error || "Failed to toggle todo");
+      throw err;
     }
   },
 
@@ -55,6 +61,7 @@ export const useTodoStore = create((set, get) => ({
       set({ todos: get().todos.filter((t) => t._id !== id) });
     } catch (err) {
       toast.error(err?.response?.data?.error || "Failed to delete todo");
+      throw err;
     }
   },
 }));

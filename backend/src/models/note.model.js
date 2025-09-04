@@ -1,4 +1,3 @@
-// models/note.model.js
 import mongoose from "mongoose";
 
 const noteSchema = new mongoose.Schema(
@@ -11,6 +10,8 @@ const noteSchema = new mongoose.Schema(
     },
     text: { type: String, required: true },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    lastEditedAt: { type: Date },
+    lastEditedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   },
   { timestamps: true }
 );

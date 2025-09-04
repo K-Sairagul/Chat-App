@@ -1,4 +1,3 @@
-// store/useNoteStore.js
 import { create } from "zustand";
 import toast from "react-hot-toast";
 import { axiosInstance } from "../lib/axios";
@@ -35,7 +34,6 @@ export const useNoteStore = create((set, get) => ({
   updateNote: async (noteId, text) => {
     try {
       await axiosInstance.put(`/notes/${noteId}`, { text });
-      // socket will handle updating state
     } catch (e) {
       toast.error(e?.response?.data?.error || "Failed to update note");
     }
@@ -45,7 +43,6 @@ export const useNoteStore = create((set, get) => ({
   deleteNote: async (noteId) => {
     try {
       await axiosInstance.delete(`/notes/${noteId}`);
-      // socket will handle removing state
     } catch (e) {
       toast.error(e?.response?.data?.error || "Failed to delete note");
     }
@@ -65,9 +62,8 @@ export const useNoteStore = create((set, get) => ({
       const { friendId, notes } = get();
 
       // Only add if this note belongs to the current friend chat
-      const belongs =
-        note.userIds?.includes(friendId) ||
-        note.userIds?.some((id) => id?._id === friendId);
+      const belongs = note.userIds?.includes(friendId) || 
+                     note.userIds?.some(id => id?._id === friendId || id === friendId);
 
       if (!belongs) return;
 
@@ -80,9 +76,8 @@ export const useNoteStore = create((set, get) => ({
     socket.on("notes:updated", (note) => {
       const { friendId } = get();
 
-      const belongs =
-        note.userIds?.includes(friendId) ||
-        note.userIds?.some((id) => id?._id === friendId);
+      const belongs = note.userIds?.includes(friendId) || 
+                     note.userIds?.some(id => id?._id === friendId || id === friendId);
 
       if (!belongs) return;
 

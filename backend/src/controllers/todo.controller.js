@@ -14,14 +14,19 @@ export const getTodos = async (req, res) => {
 // POST /api/todos
 export const addTodo = async (req, res) => {
   try {
-    const { text } = req.body;
+    const { text, completeBy } = req.body;
     if (!text?.trim()) return res.status(400).json({ error: "Text is required" });
 
-    const todo = await Todo.create({
+    const todoData = {
       userId: req.user._id,
       text: text.trim(),
-    });
+    };
 
+    if (completeBy) {
+      todoData.completeBy = new Date(completeBy);
+    }
+
+    const todo = await Todo.create(todoData);
     res.status(201).json(todo);
   } catch (err) {
     console.error("addTodo error:", err);
@@ -30,13 +35,17 @@ export const addTodo = async (req, res) => {
 };
 
 // PATCH /api/todos/:id
-// Update text and/or completed (both are optional; only provided fields are updated)
+// Update text, completed, and/or completeBy (all are optional; only provided fields are updated)
 export const updateTodo = async (req, res) => {
   try {
     const { id } = req.params;
     const updates = {};
+    
     if (typeof req.body.text === "string") updates.text = req.body.text.trim();
     if (typeof req.body.completed === "boolean") updates.completed = req.body.completed;
+    if (req.body.completeBy !== undefined) {
+      updates.completeBy = req.body.completeBy ? new Date(req.body.completeBy) : null;
+    }
 
     const todo = await Todo.findOneAndUpdate(
       { _id: id, userId: req.user._id },

@@ -1,4 +1,3 @@
-// controllers/note.controller.js
 import Note from "../models/note.model.js";
 import { io, getReceiverSocketId } from "../lib/socket.js";
 
@@ -6,7 +5,6 @@ import { io, getReceiverSocketId } from "../lib/socket.js";
  * Helper: emit to both users (if connected)
  */
 const emitToNoteUsers = (userA, userB, event, payload) => {
-  // creator (userA) is connected through their own socket room? You already use direct socketId mapping.
   const aSock = getReceiverSocketId(userA?.toString());
   if (aSock) io.to(aSock).emit(event, payload);
 
@@ -20,7 +18,10 @@ export const getNotes = async (req, res) => {
     const { friendId } = req.params;
     const notes = await Note.find({
       userIds: { $all: [req.user._id, friendId] },
-    }).sort({ createdAt: 1 });
+    })
+    .populate("createdBy", "fullName profilePic")
+    .populate("lastEditedBy", "fullName profilePic")
+    .sort({ createdAt: 1 });
 
     res.json(notes);
   } catch (err) {
@@ -41,7 +42,9 @@ export const addNote = async (req, res) => {
       createdBy: req.user._id,
     });
 
-    // Re-fetch with timestamps populated (already fine) and emit
+    // Populate user data before emitting
+    await newNote.populate("createdBy", "fullName profilePic");
+    
     emitToNoteUsers(req.user._id, friendId, "notes:added", newNote);
 
     res.status(201).json(newNote);
@@ -66,7 +69,13 @@ export const updateNote = async (req, res) => {
     }
 
     note.text = text;
+    note.lastEditedAt = new Date();
+    note.lastEditedBy = req.user._id;
     await note.save();
+
+    // Populate user data before emitting
+    await note.populate("createdBy", "fullName profilePic");
+    await note.populate("lastEditedBy", "fullName profilePic");
 
     emitToNoteUsers(note.userIds[0], note.userIds[1], "notes:updated", note);
 
